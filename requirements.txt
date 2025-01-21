@@ -1,0 +1,7 @@
+GeoAlchemy2==0.17.0
+geopandas==1.0.1
+numpy==2.2.2
+pandas==2.2.3
+psycopg2-binary==2.9.10
+python-dotenv==1.0.1
+SQLAlchemy==2.0.37
