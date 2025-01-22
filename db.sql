@@ -1,0 +1,5 @@
+CREATE DATABASE {{MLFLOW_DB}};
+
+CREATE DATABASE {{POSTGRES_DB}};
+\c {{POSTGRES_DB}};
+CREATE extension postgis;
