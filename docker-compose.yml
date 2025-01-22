@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  mlflow:
+    image: ablation-weather-mlflow-image
+    container_name: ablation-weather-mlflow
+    restart: always
+    user: root
+    build: 
+      context: .
+      dockerfile: Dockerfile.mlflow
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_CONTAINER_PORT
+      - MLFLOW_DB_NAME
+      - MLFLOW_HOST_PORT
+      - MLFLOW_CONTAINER_IP
+      - MLFLOW_CONTAINER_PORT
+      - MLFLOW_ARTIFICATS_DIR
+      - HOST_VOLUME_MOUNT_POINT
+    depends_on:
+      - db
+    ports:
+      - "${MLFLOW_HOST_PORT}:${MLFLOW_CONTAINER_PORT}"
+    volumes:
+      - ${HOST_VOLUME_MOUNT_POINT}${MLFLOW_ARTIFICATS_DIR}:${MLFLOW_ARTIFICATS_DIR}:Z
+    entrypoint: mlflow server --port ${MLFLOW_CONTAINER_PORT} --host ${MLFLOW_CONTAINER_IP} --artifacts-destination file://${MLFLOW_ARTIFICATS_DIR} --backend-store-uri postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_CONTAINER_PORT}/${MLFLOW_DB} 
+
+  db:
+    image: ablation-weather-db-image
+    container_name: ablation-weather-db
+    restart: always
+    user: root
+    build:
+      context: .
+      dockerfile: Dockerfile.postgresql
+      network: host
+    env_file:
+      - .env
+    environment:
+      - HOST_VOLUME_MOUNT_POINT
+      - POSTGRES_CONTAINER_PORT
+      - POSTGRES_HOST_PORT
+      - POSTGRES_VOLUME
+      - POSTGRES_PASSWORD
+      - POSTGRES_USER
+      - POSTGRES_DB
+      - MLFLOW_DB
+      - PGDATA
+    ports:
+      - ${POSTGRES_HOST_PORT}:${POSTGRES_CONTAINER_PORT}
+    volumes:
+      - ${HOST_VOLUME_MOUNT_POINT}${POSTGRES_VOLUME}:${PGDATA}/..:Z
+    command: -p ${POSTGRES_CONTAINER_PORT}
