@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from os import getenv
 
 class Database():
@@ -14,8 +14,20 @@ class Database():
         self.port = getenv("POSTGRES_HOST_PORT")
         self.password = getenv("POSTGRES_PASSWORD")
 
+        # establish connection
+        self.connection = create_engine(self.__get_engine_url__())
+        print(f"Connection Established!!!\n\t{self.connection}")
+
     def __get_engine_url__(self):
         return f"postgresql://{self.username}:{self.password}@{self.host}:{self.port}/{self.db_name}"
     
     def get_connection(self):
-        return create_engine(self.__get_engine_url__())
+        return self.connection
+
+    def execute_sql(self, statement:str):
+        with self.connection.connect() as con:
+            con.execute(
+                text(
+                    statement
+                )
+            )
