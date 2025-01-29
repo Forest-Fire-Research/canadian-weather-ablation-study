@@ -8,18 +8,18 @@ class Database():
         load_dotenv()
 
         # get the varaibles 
-        self.db_name = getenv("POSTGRES_DB")
-        self.host = getenv("POSTGRES_HOST")
-        self.username = getenv("POSTGRES_USER")
-        self.port = getenv("POSTGRES_HOST_PORT")
-        self.password = getenv("POSTGRES_PASSWORD")
+        self.__db_name = getenv("POSTGRES_DB")
+        self.__host = getenv("POSTGRES_HOST")
+        self.__username = getenv("POSTGRES_USER")
+        self.__port = getenv("POSTGRES_HOST_PORT")
+        self.__password = getenv("POSTGRES_PASSWORD")
 
         # establish connection
         self.connection = create_engine(self.__get_engine_url__())
         print(f"Connection Established!!!\n\t{self.connection}")
 
     def __get_engine_url__(self):
-        return f"postgresql://{self.username}:{self.password}@{self.host}:{self.port}/{self.db_name}"
+        return f"postgresql://{self.__username}:{self.__password}@{self.__host}:{self.__port}/{self.__db_name}"
     
     def get_connection(self):
         return self.connection
