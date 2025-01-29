@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from os import getenv
+from pandas import DataFrame
 
 class Database():
     def __init__(self):
@@ -23,6 +24,22 @@ class Database():
     
     def get_connection(self):
         return self.connection
+
+    def send_df_to_db(
+        self, 
+        df:DataFrame,
+        table_name:str,
+        if_exists:str = 'replace',
+        index:bool = False,
+        dtypes:dict = None
+    ):
+        df.to_sql(
+            name = table_name, 
+            con = self.connection, 
+            if_exists = if_exists, 
+            index = index, 
+            dtype = dtypes
+        )
 
     def execute_sql(self, statement:str):
         with self.connection.connect() as con:
