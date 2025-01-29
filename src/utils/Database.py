@@ -40,11 +40,14 @@ class Database():
             index = index, 
             dtype = dtypes
         )
+        print(f"Loaded data into table '{table_name}'")
 
     def execute_sql(self, statement:str):
         with self.connection.connect() as con:
+            print(f"Execution started --> {statement}")
             con.execute(
                 text(
                     statement
                 )
             )
+            print(f"Exectution completed --> {statement}")
