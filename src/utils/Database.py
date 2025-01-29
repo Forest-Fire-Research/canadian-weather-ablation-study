@@ -1,7 +1,8 @@
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, text
 from os import getenv
+from dotenv import load_dotenv
 from pandas import DataFrame
+from geopandas import GeoDataFrame
+from sqlalchemy import create_engine, text
 
 class Database():
     def __init__(self):
@@ -41,6 +42,22 @@ class Database():
             dtype = dtypes
         )
         print(f"Loaded data into table '{table_name}'")
+    
+    def send_gdf_to_db(
+        self, 
+        gdf:GeoDataFrame,
+        table_name:str,
+        if_exists:str = 'replace',
+        index:bool = False,
+        dtypes:dict = None
+    ):
+        gdf.to_postgis(
+            name = table_name, 
+            con = self.connection, 
+            if_exists = if_exists, 
+            index = index, 
+            dtype = dtypes
+        )
 
     def execute_sql(self, statement:str):
         with self.connection.connect() as con:
