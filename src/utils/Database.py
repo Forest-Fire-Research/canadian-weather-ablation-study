@@ -67,4 +67,5 @@ class Database():
                     statement
                 )
             )
+            con.commit()
             print(f"Exectution completed --> {statement}")
